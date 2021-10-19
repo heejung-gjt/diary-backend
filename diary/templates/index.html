@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/453205446a.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/style.css">
+  <script src="static/js/script.js" defer></script>
+  <title>오늘 뭐했지 ?</title>
+</head>
+
+<body>
+  <!-- 등록 모달창 -->
+  <div class="modal-upload-layer">
+    <article class="modal-upload">
+      <h2 class="upload-title a11y-hidden">등록 모달창</h2>
+      <p class="upload-description"><span class="fa fa-paw"></span>당신의 하루는 어땠나요 ?</p>
+      <ul class="upload-content">
+        <li class="upload-img">
+          <input type="file" class="upload-img-input">
+          <img src="#" alt="이미지 미리보기" class="upload-preview-img" onerror="this.src='img/img5.png'">
+        </li>
+        <li class="upload-content-title">
+          <input class="upload-input-title" type="text" placeholder="제목">
+        </li>
+        <li class="upload-content-detail">
+          <textarea name="upload-textarea" class="upload-textarea" cols="30" rows="10" placeholder="내용"></textarea>
+        </li>
+      </ul>
+      <button class="upload-add-button">등록</button>
+      <span class="fas fa-times-circle upload-close"></span>
+    </article>
+  </div>
+  <!-- 메인 화면 -->
+  <section class="main">
+    <div class="main-box">
+      <h1 class="main-title">오늘 뭐했지?</h1>
+      <p class="main-description">찰나의 순간을 기록하고 싶은<span>모든 이들을 위하여</span></p>
+      <input class="main-input" type="text" placeholder="찾고싶은 날짜나 제목을 입력하세요">
+      <button class="main-submit">등록</button>
+    </div>
+    <div class="items-box">
+      <ul class="main-items">
+        <li class="li-item li-item{{diary.id}}">
+          <img src="{{diary.image}}" alt="item이미지" class="img">
+          <span class="far fa-times-circle item-close"></span>
+          <span class="li-date">{{diary.date}}</span>
+          <span class="li-title">{{diary.title}}</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+  <!-- 세부내용 화면 -->
+  <section class="detail">
+    <h2 class="detail-title a11y-hidden">세부내용</h2>
+    <ul class="detail-content">
+    </ul>
+    <button class="detail-btn"><span class="fas fa-chevron-up"></span><span class="fas fa-chevron-up"></span></button>
+    <div class="buttons">
+      <button class="toggle detail-change-button">수정</button>
+      <div class="toggle buttons-confirm-cancel">
+        <button class="detail-confirm-button">확인</button>
+        <button class="detail-cancel-button">취소</button>
+      </div>
+    </div>
+  </section>
+</body>
+
+</html>
