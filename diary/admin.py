@@ -1,5 +1,2 @@
-from django.contrib import admin
-from diary.models import Diary
+# from django.contrib import admin
 
-
-admin.site.register(Diary)

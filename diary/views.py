@@ -1,15 +1,54 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.views.generic import ListView
+import json
+from django.views.generic import View
+from diary.models import Article
+from config.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME,AWS_S3_REGION_NAME, STATIC_URL
+from boto3.session import Session
+from datetime import datetime
+import boto3
 
-
-class DiaryView(ListView):
+class ArticleView(View):
     def get(self, request, **kwargs):
-        print('왔ㅇ엉..')
-        tmpList = [
-       {'id': 4, 'title': "머리가 아푸다 흑흑", 'content': "내용4", 'date': "2021-04-06", 'edited':''},
-       {'id': 3, 'title': "study.. 머리가 아푸다 흑흑", 'content': "내용2", 'date': "2021-04-05", 'edited':''},
-       {'id': 2, 'title': "hard.. 머리가 아푸다 흑흑", 'content': "내용3", 'date': "2021-04-04", 'edited':''},
-       {'id': 1, 'title': "okok 오예오예 어차차 머리가 아푸다 흑흑", 'content': "내용", 'date': "2021-04-03", 'edited':''},
-   ]
-        return JsonResponse(data=tmpList, safe=False)
+        articles = Article.objects.values('id', 'title', 'created_at', 'image')
+       
+        return JsonResponse({'articles':list(articles)}, safe=False)
+
+
+class ArticleCreateView(View):
+    def post(self, request, *args, **kwargs):
+        # data = json.loads(request.body)
+        file = request.FILES.get('image')
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        s3_url = "https://django-diary-bucket.s3.ap-northeast-2.amazonaws.com/"
+        client = boto3.client(
+            's3',
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        )
+        bucket = AWS_STORAGE_BUCKET_NAME
+        now = datetime.now().strftime('%Y%H%M%S')
+        client.upload_fileobj(
+            file,
+            bucket,
+            now+file.name,
+            ExtraArgs={
+                    "ContentType": file.content_type,
+            }
+        )
+        Article.objects.create(
+        title = title,
+        content = content,
+        image = s3_url+now+file.name
+        )  
+        return JsonResponse({'message': 'success'}, status=200)
+
+
+class ArticleDetailView(View):
+    def get(self, request, *args, **kwargs):
+        print('흐므므믐')
+        id = request.GET.get('id')
+        article = Article.objects.filter(id = id).values('id', 'title', 'content', 'image', 'created_at', 'updated_at')
+        print(article)
+        return JsonResponse({'article':list(article)}, status=200)

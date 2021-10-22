@@ -2,7 +2,7 @@ from django.db import models
 import time
 
 
-class Diary(models.Model):
+class Article(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
     image = models.TextField(blank=True)
