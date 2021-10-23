@@ -7,6 +7,8 @@ from config.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAG
 from boto3.session import Session
 from datetime import datetime
 import boto3
+import time
+
 
 class ArticleView(View):
     def get(self, request, **kwargs):
@@ -17,7 +19,6 @@ class ArticleView(View):
 
 class ArticleCreateView(View):
     def post(self, request, *args, **kwargs):
-        # data = json.loads(request.body)
         file = request.FILES.get('image')
         title = request.POST.get('title')
         content = request.POST.get('content')
@@ -40,7 +41,8 @@ class ArticleCreateView(View):
         Article.objects.create(
         title = title,
         content = content,
-        image = s3_url+now+file.name
+        image = s3_url+now+file.name,
+        created_at = time.time()
         )  
         return JsonResponse({'message': 'success'}, status=200)
 
@@ -52,3 +54,25 @@ class ArticleDetailView(View):
         article = Article.objects.filter(id = id).values('id', 'title', 'content', 'image', 'created_at', 'updated_at')
         print(article)
         return JsonResponse({'article':list(article)}, status=200)
+
+
+class ArticleUpdateView(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        Article.objects.filter(id = data['id']).update(
+            title = data['title'],
+            content = data['content'],
+            updated_at = time.time()
+        )
+        article = Article.objects.filter(id = data['id']).values('id', 'title', 'content', 'created_at', 'image', 'updated_at')
+        return JsonResponse({'article': list(article)}, status=200)
+
+
+class ArticleDeleteView(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        Article.objects.filter(id = data['id']).delete()
+        articles = Article.objects.all().values('id', 'title', 'created_at', 'image', 'updated_at')
+        print('aaaa',articles, len(articles))
+        return JsonResponse({'articles': list(articles)}, status=200)
+
