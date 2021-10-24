@@ -1,78 +1,71 @@
-from django.shortcuts import render
-from django.http import JsonResponse
 import json
+from django.http import JsonResponse
 from django.views.generic import View
 from diary.models import Article
-from config.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME,AWS_S3_REGION_NAME, STATIC_URL
-from boto3.session import Session
-from datetime import datetime
-import boto3
-import time
+from .services import ArticleService, UploadImageService
+from .dto import ArticleCreateDto, ArticleIdDto, ArticleUpdateDto
 
 
 class ArticleView(View):
     def get(self, request, **kwargs):
-        articles = Article.objects.values('id', 'title', 'created_at', 'image')
-       
+        articles = ArticleService.articles()
         return JsonResponse({'articles':list(articles)}, safe=False)
 
 
 class ArticleCreateView(View):
     def post(self, request, *args, **kwargs):
-        file = request.FILES.get('image')
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        s3_url = "https://django-diary-bucket.s3.ap-northeast-2.amazonaws.com/"
-        client = boto3.client(
-            's3',
-            aws_access_key_id=AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-        )
-        bucket = AWS_STORAGE_BUCKET_NAME
-        now = datetime.now().strftime('%Y%H%M%S')
-        client.upload_fileobj(
-            file,
-            bucket,
-            now+file.name,
-            ExtraArgs={
-                    "ContentType": file.content_type,
-            }
-        )
-        Article.objects.create(
-        title = title,
-        content = content,
-        image = s3_url+now+file.name,
-        created_at = time.time()
-        )  
+        data = self._build_article_infor(request)
+        image_url = UploadImageService.upload(data)
+        ArticleService.create(data, image_url)
         return JsonResponse({'message': 'success'}, status=200)
+
+    def _build_article_infor(self, request):
+        return ArticleCreateDto(
+            file = request.FILES.get('image'),
+            title = request.POST.get('title'),
+            content = request.POST.get('content')
+        )
 
 
 class ArticleDetailView(View):
     def get(self, request, *args, **kwargs):
-        print('흐므므믐')
-        id = request.GET.get('id')
-        article = Article.objects.filter(id = id).values('id', 'title', 'content', 'image', 'created_at', 'updated_at')
-        print(article)
+        data = self._build_article_id(request)
+        article = ArticleService.filter_article(data)
         return JsonResponse({'article':list(article)}, status=200)
+    
+    def _build_article_id(self, request):
+        return ArticleIdDto(
+            id = request.GET.get('id')
+        )
 
 
 class ArticleUpdateView(View):
+
     def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        Article.objects.filter(id = data['id']).update(
-            title = data['title'],
-            content = data['content'],
-            updated_at = time.time()
+        data = self._build_article_infor(request)
+        image_url = UploadImageService.upload(data)
+        ArticleService.update(data, image_url)
+        article = ArticleService.filter_article(data)
+        return JsonResponse({'article':list(article)}, status=200)
+
+    def _build_article_infor(self, request):
+        return ArticleUpdateDto(
+            id = request.POST.get('id'),
+            file = request.FILES.get('image'),
+            title = request.POST.get('title'),
+            content = request.POST.get('content')
         )
-        article = Article.objects.filter(id = data['id']).values('id', 'title', 'content', 'created_at', 'image', 'updated_at')
-        return JsonResponse({'article': list(article)}, status=200)
 
 
 class ArticleDeleteView(View):
     def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        Article.objects.filter(id = data['id']).delete()
-        articles = Article.objects.all().values('id', 'title', 'created_at', 'image', 'updated_at')
-        print('aaaa',articles, len(articles))
+        data = self._build_article_id(request)
+        ArticleService.delete(data)
+        articles = ArticleService.articles()
         return JsonResponse({'articles': list(articles)}, status=200)
 
+    def _build_article_id(self, request):
+        data = json.loads(request.body)
+        return ArticleIdDto(
+            id = data['id']
+        )

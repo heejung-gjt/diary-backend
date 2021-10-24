@@ -14,6 +14,6 @@
 
 
 ## v2.0
-diary CRUD FE, BE 로직 분리
-FE : Ajax로 GET, POST요청 주고받음  
-BE : JsonResponse로 응답 주고받음   
+diary CRUD FE, BE 로직 분리     
+FE : Ajax로 GET, POST요청 주고받음     
+BE : JsonResponse로 응답 주고받음       
