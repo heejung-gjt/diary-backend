@@ -17,21 +17,28 @@ class ArticleView(View):
         return JsonResponse({'articles':list(articles), 'user':list(user_infor)}, safe=False)
 
 class ArticleCreateView(View):
+    
+    @login_check
     def post(self, request, *args, **kwargs):
+        print('헐..')
         data = self._build_article_infor(request)
         image_url = UploadImageService.upload(data)
         ArticleService.create(data, image_url)
         return JsonResponse({'message': 'success'}, status=200)
 
     def _build_article_infor(self, request):
+        print(request.user.pk)
         return ArticleCreateDto(
             file = request.FILES.get('image'),
             title = request.POST.get('title'),
-            content = request.POST.get('content')
+            content = request.POST.get('content'),
+            user_pk  = request.user.pk
         )
 
 
 class ArticleDetailView(View):
+
+    @login_check
     def get(self, request, *args, **kwargs):
         data = self._build_article_id(request)
         article = ArticleService.filter_article(data)
@@ -39,7 +46,8 @@ class ArticleDetailView(View):
     
     def _build_article_id(self, request):
         return ArticleIdDto(
-            id = request.GET.get('id')
+            id = request.GET.get('id'),
+            user_pk = request.user.pk
         )
 
 
@@ -62,14 +70,17 @@ class ArticleUpdateView(View):
 
 
 class ArticleDeleteView(View):
+
+    @login_check
     def post(self, request, *args, **kwargs):
         data = self._build_article_id(request)
         ArticleService.delete(data)
-        articles = ArticleService.articles()
+        articles = ArticleService.articles(data.user_pk)
         return JsonResponse({'articles': list(articles)}, status=200)
 
     def _build_article_id(self, request):
         data = json.loads(request.body)
         return ArticleIdDto(
-            id = data['id']
+            id = data['id'],
+            user_pk = request.user.pk
         )
