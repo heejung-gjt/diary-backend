@@ -1,16 +1,20 @@
 import json
 from django.http import JsonResponse
+from django.http.response import ResponseHeaders
 from django.views.generic import View
 from diary.models import Article
+from diary.utils import login_check
 from .services import ArticleService, UploadImageService
 from .dto import ArticleCreateDto, ArticleIdDto, ArticleUpdateDto
-
+from user.models import User
 
 class ArticleView(View):
-    def get(self, request, **kwargs):
-        articles = ArticleService.articles()
-        return JsonResponse({'articles':list(articles)}, safe=False)
 
+    @login_check
+    def get(self, request, **kwargs):
+        articles = ArticleService.articles(request.user.pk)
+        user_infor = User.objects.filter(pk=request.user.pk).values('userid')
+        return JsonResponse({'articles':list(articles), 'user':list(user_infor)}, safe=False)
 
 class ArticleCreateView(View):
     def post(self, request, *args, **kwargs):

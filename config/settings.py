@@ -30,17 +30,19 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',
     # 'django.contrib.admin',
     # 'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'diary',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -146,20 +148,31 @@ CORS_ALLOW_METHODS = (
     'PUT',
 )
 
-CORS_ALLOW_HEADERS = (
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    # 'multipart/form-data',
-		#만약 허용해야할 추가적인 헤더키가 있다면?(사용자정의 키) 여기에 추가하면 됩니다.
-)
+# CORS_ALLOW_HEADERS = (
+#     'accept',
+#     'accept-encoding',
+#     'authorization',
+#     'content-type',
+#     'dnt',
+#     'origin',
+#     'user-agent',
+#     'x-csrftoken',
+#     'x-requested-with',
+#     'application/json',
+#     'access-control-allow-headers',
+#     'access-control-allow-methods',
+#     'access-control-allow-origin',
 
+#     # 'multipart/form-data',
+# 		#만약 허용해야할 추가적인 헤더키가 있다면?(사용자정의 키) 여기에 추가하면 됩니다.
+# )
+CORS_ALLOW_HEADERS = (
+    'access-control-allow-headers',
+    'access-control-allow-methods',
+    'access-control-allow-origin',
+    'authorization',
+    'content-type'
+)
 
 # s3 설정
 AWS_ACCESS_KEY_ID=env('AWS_ACCESS_KEY_ID')

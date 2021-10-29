@@ -12,8 +12,8 @@ from boto3.session import Session
 class ArticleService():
 
     @staticmethod
-    def articles():
-        return Article.objects.values('id', 'title', 'created_at', 'image')
+    def articles(pk):
+        return Article.objects.filter(writer__pk = pk).values('id', 'title', 'created_at', 'image')
 
     @staticmethod
     def detail_article(id):
