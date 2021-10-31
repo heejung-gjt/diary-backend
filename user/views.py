@@ -13,7 +13,6 @@ from .models import User
 class LoginView(View):
     def post(self, request):
         data = json.loads(request.body)
-        print(data)
         try:
             if User.objects.filter(userid=data['username']).exists():
                 user = User.objects.get(userid=data['username'])
@@ -28,7 +27,6 @@ class LoginView(View):
 
 
 class SignUpView(View):
-
 
     def post(self, request):
         data = json.loads(request.body)
@@ -46,4 +44,4 @@ class SignUpView(View):
             return JsonResponse({'message': 'Invalid Keys'}, status=400)
 
         except ValidationError as e:
-            return JsonResponse({'message': e.message}, status=400)
+            return JsonResponse({'error': e.message}, status=400)
