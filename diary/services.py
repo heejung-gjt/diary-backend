@@ -5,14 +5,13 @@ from datetime import datetime
 from config.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME
 
 from diary.dto    import ArticleCreateDto, ArticleIdDto, ArticleUpdateDto
-from user.models  import User
 from diary.models import Article
 
 
 class ArticleService():
     @staticmethod
-    def articles(pk):
-        return Article.objects.filter(writer__pk = pk).values("id", "title", "created_at", "image")
+    def get_articles(pk):
+        return Article.objects.filter(writer__pk=pk).values("id", "title", "created_at", "image")
 
     @staticmethod
     def detail_article(id):
