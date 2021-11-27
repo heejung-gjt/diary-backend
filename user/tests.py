@@ -20,37 +20,39 @@ class SignUpTest(TestCase):
     def test_post_signup_success(self):
         signup_data = {"username": "test1", "password": "qwerty1!"}
         response = self.client.post('/user/signup', json.dumps(signup_data), content_type='application/json')
+
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"message" : "SUCCESS"})  
 
     def test_post_signup_already_exist_id(self):
         signup_data = {"username": "test2", "password": "qwerty1!"}
-        response=self.client.post('/user/signup',json.dumps(signup_data), content_type='application/json')
+
+        response=self.client.post("/user/signup",json.dumps(signup_data), content_type="application/json")
         
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {"message" : "ALREADY EXIST ID"})        
+        self.assertEqual(response.json(), {"error" : "아이디가 존재합니다"})        
 
     def test_post_signup_invalid_id_type(self):
         signup_data = {"username": "tes", "password": "qwerty1!"}
-        response=self.client.post('/user/signup',json.dumps(signup_data), content_type='application/json')
+        response=self.client.post("/user/signup",json.dumps(signup_data), content_type="application/json")
         
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {"message" : "INVALID ID TYPE"})        
+        self.assertEqual(response.json(), {"error" : "아이디 형식이 틀립니다"})        
 
     def test_post_signup_invalid_password(self):
         signup_data = {"username": "test1", "password": "qwer"}
-        response=self.client.post('/user/signup',json.dumps(signup_data), content_type='application/json')
+        response=self.client.post("/user/signup",json.dumps(signup_data), content_type="application/json")
         
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {"message" : "INVALID PWD TYPE"})   
+        self.assertEqual(response.json(), {"error" : "비밀번호 형식이 틀립니다"})   
 
     def test_post_signup_key_error(self):
         signup_data = {"usernames": "test1", "password": "qwerty1@"}
-        response=self.client.post('/user/signin',json.dumps(signup_data), content_type='application/json')
+        response=self.client.post("/user/signin",json.dumps(signup_data), content_type="application/json")
         
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {"message" : "KEY ERROR"})  
+        self.assertEqual(response.json(), {"error" : "KEY ERROR"})  
 
 
 class SignInTest(TestCase):
@@ -76,18 +78,19 @@ class SignInTest(TestCase):
         response=self.client.post("/user/signin", json.dumps(signup_data), content_type="application/json")
         
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {"message" : "INVALID INPUT"})  
+
+        self.assertEqual(response.json(), {"error" : "아이디 또는 비밀번호를 다시 입력해주세요"})  
 
     def test_post_signin_invalid_pwd(self):
         signup_data = {"username": "test1", "password": "qwerty@@"}
         response=self.client.post("/user/signin", json.dumps(signup_data), content_type="application/json")
         
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {"message" : "INVALID INPUT"}) 
+        self.assertEqual(response.json(), {"error" : "아이디 또는 비밀번호를 다시 입력해주세요"}) 
 
     def test_post_signin_key_error(self):
         signup_data = {"usernames": "test1", "password": "qwerty@@"}
         response=self.client.post("/user/signin", json.dumps(signup_data), content_type="application/json")
         
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {"message" : "KEY ERROR"})         
+        self.assertEqual(response.json(), {"error" : "KEY ERROR"})         

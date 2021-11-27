@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 
 from user.models import User
 from core.validator import validate_id, validate_pwd, validate_user_id, validate_user_pwd
-from config.settings import SECRET_KEY
+from config.settings import ALGORITHM, SECRET_KEY
 
 
 class SignUpView(View):
@@ -27,8 +27,9 @@ class SignUpView(View):
         except KeyError:
             return JsonResponse({'error': 'KEY ERROR'}, status=400)
 
+
         except ValidationError as e:
-            return JsonResponse({'error': e.message}, status=400)
+            return JsonResponse({"error": e.message}, status=400)
 
 
 class SigninView(View):
@@ -39,12 +40,13 @@ class SigninView(View):
             password = validate_user_pwd(userid, data["password"])
 
             if password:
-                token = jwt.encode({'user_id':userid.id}, SECRET_KEY, algorithm='HS256').decode('utf-8')
+                token = jwt.encode({'user_id':userid.id}, SECRET_KEY, ALGORITHM).decode('utf-8')
             
             return JsonResponse({'message' : 'SUCCESS', 'token':token}, status=200)
                     
         except KeyError:
             return JsonResponse({'error': 'KEY ERROR'}, status=400)
+
 
         except ValidationError as e:
             return JsonResponse({"error": e.message}, status=400)

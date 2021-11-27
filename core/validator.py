@@ -11,12 +11,14 @@ def validate_id(id):
 
     if len(id) < 4:
         raise ValidationError(('아이디 형식이 틀립니다'), code='invalid')
+
     return id
 
 
 def validate_pwd(pwd):
     if len(pwd) < 5:
         raise ValidationError(('비밀번호 형식이 틀립니다'), code='invalid')
+
     return pwd
 
 
@@ -29,6 +31,7 @@ def validate_user_id(id):
 
 def validate_user_pwd(user, pwd):
     if not bcrypt.checkpw(pwd.encode('utf-8'), user.password.encode('utf-8')):
+
         raise ValidationError(("아이디 또는 비밀번호를 다시 입력해주세요"), code="invalid")
     
     return True
