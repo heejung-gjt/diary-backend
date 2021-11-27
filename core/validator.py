@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
-from .models import User
+
+from user.models import User
 
 def validate_id(id):
     if User.objects.filter(userid = id).exists():

@@ -1,13 +1,12 @@
-from os import stat
 import boto3
 import time
 from datetime import datetime
-from diary.dto import ArticleIdDto, ArticleUpdateDto
+
+from config.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME
+
+from diary.dto    import ArticleCreateDto, ArticleIdDto, ArticleUpdateDto
+from user.models  import User
 from diary.models import Article
-from .dto import ArticleCreateDto
-from config.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME,AWS_S3_REGION_NAME, STATIC_URL
-from boto3.session import Session
-from user.models import User
 
 
 class ArticleService():
@@ -26,7 +25,6 @@ class ArticleService():
 
     @staticmethod
     def create(dto:ArticleCreateDto, url):
-        print('여론이 장난ㅇ이야 아니야..')
         Article.objects.create(
         writer = User.objects.get(pk=dto.user_pk),
         title = dto.title,
