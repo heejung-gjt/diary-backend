@@ -17,7 +17,7 @@ class ArticleService():
 
     @staticmethod
     def detail_article(id):
-        return Article.objects.filter(id = id).values("id", "title", "content", "created_at", "image", "updated_at")
+        return Article.objects.filter(id=id).values("id", "title", "content", "created_at", "image", "updated_at")
 
     @staticmethod
     def filter_article(dto:ArticleIdDto):
@@ -41,13 +41,13 @@ class ArticleService():
             aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
         )
         bucket = AWS_STORAGE_BUCKET_NAME
+
         client.delete_object(
             Bucket= bucket,
             Key = Article.objects.get(id=dto.id).image.split("/")[-1]
         )
 
-        Article.objects.filter(id = dto.id).delete()
-
+        Article.objects.filter(id=dto.id).delete()
 
     @staticmethod
     def update(dto:ArticleIdDto, file):
@@ -103,7 +103,9 @@ class UploadImageService():
                 now+dto.file.name,
                 ExtraArgs={"ContentType": dto.file.content_type,}
                 )
+
             image_name = s3_url+now+dto.file.name
+        
         return image_name
 
 

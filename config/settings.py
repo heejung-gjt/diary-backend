@@ -61,28 +61,28 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": env("NAME"),
-        "USER": env("NAME"),
-        "PASSWORD": env("PASSWORD"),
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
-    }
-}
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': env('NAME'),
-#         'USER': 'diary',
-#         'PASSWORD': env('PASSWORD'),
-#         'HOST': 'localhost',
-#         'PORT': '',
-
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": env("NAME"),
+#         "USER": env("NAME"),
+#         "PASSWORD": env("PASSWORD"),
+#         "HOST": "127.0.0.1",
+#         "PORT": "3306",
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('NAME'),
+        'USER': 'diary',
+        'PASSWORD': env('PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '',
+
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -147,10 +147,10 @@ AWS_STORAGE_BUCKET_NAME=env("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME="ap-northeast-2" # 버킷 생성할때 지정한 region을 작성한다
 AWS_S3_FILE_OVERWRITE=False # 기본적인 오버라이트 설정 false
 
-# import dj_database_url
+import dj_database_url
 
-# db_from_env = dj_database_url.config(conn_max_age=500)
+db_from_env = dj_database_url.config(conn_max_age=500)
 
-# DATABASES['default'].update(db_from_env)
+DATABASES['default'].update(db_from_env)
 
 APPEND_SLASH = False

@@ -5,8 +5,9 @@ from django.core.exceptions import ValidationError
 from user.models import User
 from diary.models import Article
 
+
 def validate_id(id):
-    if User.objects.filter(userid = id).exists():
+    if User.objects.filter(userid=id).exists():
         raise ValidationError(('아이디가 존재합니다'), code='invalid')
 
     if len(id) < 4:
