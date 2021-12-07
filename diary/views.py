@@ -1,12 +1,10 @@
-import json
-
 from django.http import JsonResponse
 from django.views.generic import View
 
 from diary.dto import ArticleCreateDto, ArticleIdDto, ArticleUpdateDto
+from diary.models import Article
 from core.utils import login_check
 from core.validator import validate_user_permission
-from diary.models import Article
 from diary.services import ArticleService, UploadImageService
 from user.services import UserService
 
@@ -92,3 +90,26 @@ class ArticleDetailView(View):
             content=request.POST.get("content")
         )
 
+    @login_check
+    def delete(self, request, id):
+        try: 
+            data = self._build_article_delete_id(request, id)
+            user_permission = validate_user_permission(data.id, request.user.pk)
+            
+            if user_permission["error"]:
+                return JsonResponse({"message": "NO PERMISSION"}, status=405)
+
+            ArticleService.delete(data)
+
+            articles = ArticleService.get_articles(data.user_pk)
+
+            return JsonResponse({"articles": list(articles)}, status=200)
+        
+        except Article.DoesNotExist:
+            return JsonResponse({"message": "NO EXIST ARTICLE"}, status=404)
+
+    def _build_article_delete_id(self, request, id):
+        return ArticleIdDto(
+            id=id,
+            user_pk=request.user.pk
+        )
