@@ -115,4 +115,54 @@ class ArticleDetailTest(TestCase):
         self.assertEqual(response.status_code, 405)
         self.assertEqual(response.json(), {"message": "NO PERMISSION"})
 
-   
+    def test_put_article_success(self):
+            header = {"HTTP_Authorization": self.user1_token}
+            
+            with open("/home/heejung/Desktop/프로젝트 이미지들/오늘 머했지.png", "rb") as myfile1:
+                data = {
+                    "image": myfile1, 
+                    "title": "수정한 첫번째 타이틀", 
+                    "content": "수정한 내용입니다"
+                    }
+
+                response = self.client.post("/article/1", data, **header)
+            
+            self.assertEqual(response.status_code, 200)
+
+    def test_put_article_no_permission(self):
+        header = {"HTTP_Authorization": self.user2_token}
+        
+        with open("/home/heejung/Desktop/프로젝트 이미지들/오늘 머했지.png", "rb") as myfile1:
+            data = {
+                "image": myfile1, 
+                "title": "수정한 타이틀", 
+                "content": "수정한 내용입니다"
+                }
+
+            response = self.client.post("/article/1", data, **header)
+        
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.json(), {"message": "NO PERMISSION"})
+
+    def test_delete_article_success(self):
+            header = {"HTTP_Authorization": self.user1_token}
+
+            response = self.client.delete("/article/delete/1", **header)
+            
+            self.assertEqual(response.status_code, 200)
+
+    def test_delete_article_no_permission(self):
+        header = {"HTTP_Authorization": self.user2_token}
+
+        response = self.client.delete("/article/delete/1", **header)
+        
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.json(), {"message": "NO PERMISSION"})
+
+    def test_delete_article_no_exist(self):
+        header = {"HTTP_Authorization": self.user1_token}
+
+        response = self.client.delete("/article/delete/2", **header)
+        
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), {"message": "NO EXIST ARTICLE"})

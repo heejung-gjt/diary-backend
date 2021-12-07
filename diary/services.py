@@ -34,7 +34,7 @@ class ArticleService():
         )
 
     @staticmethod
-    def delete(dto:ArticleIdDto):
+    def delete(dto:ArticleIdDto):   
         client = boto3.client(
             "s3",
             aws_access_key_id=AWS_ACCESS_KEY_ID,
@@ -45,7 +45,9 @@ class ArticleService():
             Bucket= bucket,
             Key = Article.objects.get(id=dto.id).image.split("/")[-1]
         )
+
         Article.objects.filter(id = dto.id).delete()
+
 
     @staticmethod
     def update(dto:ArticleIdDto, file):
