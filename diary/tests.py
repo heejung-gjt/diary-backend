@@ -97,13 +97,13 @@ class ArticleDetailTest(TestCase):
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {
-            'article': [{
-                        'content': '테스트컨텐츠',
-                        'created_at': '1638018629.919184',
-                        'id': 1,
-                        'image': 'img.png',
-                        'title': '테스트타이틀',
-                        'updated_at': ''
+            "article": [{
+                        "content": "테스트컨텐츠",
+                        "created_at": "1638018629.919184",
+                        "id": 1,
+                        "image": "img.png",
+                        "title": "테스트타이틀",
+                        "updated_at": ""
                         }]
                     })
 

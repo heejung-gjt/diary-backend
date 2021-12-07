@@ -54,7 +54,7 @@ class ArticleDetailView(View):
         
         article = ArticleService.filter_article(data)
 
-        return JsonResponse({"article":list(article)}, status=200)
+        return JsonResponse({"article": list(article)}, status=200)
     
     def _build_article_detail_id(self, request):
         return ArticleIdDto(
@@ -80,7 +80,7 @@ class ArticleDetailView(View):
 
         article = ArticleService.filter_article(data)
         
-        return JsonResponse({"article":list(article)}, status=200)
+        return JsonResponse({"article": list(article)}, status=200)
 
     def _build_article_info(self, request, id):
         return ArticleUpdateDto(
