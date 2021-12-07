@@ -17,3 +17,4 @@ PyJWT==1.7.1
 requests==2.26.0
 s3==3.0.0
 urllib3==1.26.7
+whitenoise==5.3.0
