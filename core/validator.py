@@ -3,7 +3,7 @@ import bcrypt
 from django.core.exceptions import ValidationError
 
 from user.models import User
-
+from diary.models import Article
 
 def validate_id(id):
     if User.objects.filter(userid = id).exists():
@@ -35,3 +35,11 @@ def validate_user_pwd(user, pwd):
         raise ValidationError(("아이디 또는 비밀번호를 다시 입력해주세요"), code="invalid")
     
     return True
+
+
+def validate_user_permission(id, user_id):
+    if Article.objects.get(id=id).writer.id != user_id:
+        
+        return {"error": True}
+    
+    return {"error": False}
